@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "469163344114",
+    "project_id": "movup-c643c",
+    "storage_bucket": "movup-c643c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:469163344114:android:f2d121b6bcfe62bb36d06b",
+        "android_client_info": {
+          "package_name": "com.project.movup.movup"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "469163344114-15kfscomspdnvq236j26buq6ojcnghhv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCbXgRW9aM1-6OxSzeQuBJ7sm0RBQ5guIs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "469163344114-15kfscomspdnvq236j26buq6ojcnghhv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
