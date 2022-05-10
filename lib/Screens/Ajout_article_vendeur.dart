@@ -134,7 +134,7 @@ class _ajout_article_vendeurstate extends State<ajout_article_vendeur>{
                       "Vendeur_id": FirebaseAuth.instance.currentUser!.uid.toString().trim(),
                       "Reference": _ref.text.trim(),
                       "Nom": _nom.text.trim(),
-                      "quantite" : _qte.text.trim(),
+                      "quantite" : int.parse(_qte.text.trim()),
                       "categorie": categories_val,
                       "image" : filename,
                     }).then((value) =>
