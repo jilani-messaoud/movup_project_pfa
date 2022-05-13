@@ -1,8 +1,13 @@
+
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:movup/Services/storage_services.dart' as storage;
+
 import 'package:movup/Services/storage_services.dart';
 import 'package:movup/Utils/color_utils.dart';
+import 'package:movup/article_data.dart';
 
 class vendeur_screen_produit extends StatelessWidget {
 
@@ -10,6 +15,7 @@ class vendeur_screen_produit extends StatelessWidget {
   final Stream<QuerySnapshot> articles =
   FirebaseFirestore.instance.collection('articles').snapshots();
   final Storage storage = Storage();
+  CollectionReference ref =  FirebaseFirestore.instance.collection('articles');
   TextEditingController _quantite = TextEditingController();
   @override
 
@@ -28,7 +34,9 @@ class vendeur_screen_produit extends StatelessWidget {
               hexStringToColor("9546C4"),
               hexStringToColor("5E61F4")
             ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
-        child: StreamBuilder<QuerySnapshot>(stream: articles,builder:(BuildContext context,  AsyncSnapshot<QuerySnapshot> snapshot){
+        child: StreamBuilder<QuerySnapshot>(stream: ref.snapshots(),
+          builder:(BuildContext context,
+              AsyncSnapshot<QuerySnapshot> snapshot){
           if(snapshot.hasError){
             return Text("something wrong");
           }
@@ -80,7 +88,54 @@ class vendeur_screen_produit extends StatelessWidget {
                       ),
                       ElevatedButton(onPressed:(){
 
-                        openDialogueBox(context);
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: Text('Edit User Details'),
+                                content: Container(
+                                  height: 150,
+                                  child: Column(
+                                    children: [
+
+                                      TextField(
+                                        controller: _quantite,
+                                        decoration: InputDecoration(hintText: 'quantite'),
+                                      ),
+
+                                    ],
+                                  ),
+                                ),
+                                actions: [
+                                  FlatButton(
+                                    onPressed: () {
+
+                                        int qte = int.parse(_quantite.text.trim());
+
+                                        final art =FirebaseFirestore.instance.collection('articles').doc(datauser.docs[index].id);
+                                        art.update(
+                                          {
+                                            'quantite': qte,
+
+                                          }
+                                        );
+                                        //updateArticle(int.parse(_quantite.text.trim()));
+
+
+
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text('Submit'),
+                                  ),
+                                  FlatButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text('Cancel'),
+                                  )
+                                ],
+                              );
+                            });
 
                       }, child: Text("modifie quantite et image du produit"))
 
@@ -103,43 +158,6 @@ class vendeur_screen_produit extends StatelessWidget {
 
 
   }
-  openDialogueBox(BuildContext context) {
-    return showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text('Edit User Details'),
-            content: Container(
-              height: 150,
-              child: Column(
-                children: [
-
-                  TextField(
-                    controller: _quantite,
-                    decoration: InputDecoration(hintText: 'quantite'),
-                  ),
-
-                ],
-              ),
-            ),
-            actions: [
-              FlatButton(
-                onPressed: () {
-
-                  Navigator.pop(context);
-                },
-                child: Text('Submit'),
-              ),
-              FlatButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: Text('Cancel'),
-              )
-            ],
-          );
-        });
-}
 
 
   }

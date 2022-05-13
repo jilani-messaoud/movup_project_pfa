@@ -14,6 +14,7 @@ import 'package:movup/article_data.dart';
 class client_screen extends StatelessWidget {
   final Stream<QuerySnapshot> articles =
   FirebaseFirestore.instance.collection('articles').snapshots();
+  CollectionReference commandes = FirebaseFirestore.instance.collection("commande");
   final Storage storage = Storage();
 
 
@@ -104,7 +105,65 @@ class client_screen extends StatelessWidget {
                         }
                     ),
                   ElevatedButton(onPressed:(){
+                    TextEditingController _quantite = TextEditingController();
+                   showDialog(
+                       context: context,
+                       builder: (context){
+                         return AlertDialog(
+                           title: Text("fenetre d'achat"),
+                           content: Container(
+                             height: 150,
+                             child: Column(
+                               children: [
 
+                                 TextField(
+                                   controller: _quantite,
+                                   decoration: InputDecoration(hintText: 'quantite'),
+                                 ),
+
+                               ],
+                             ),
+                           ),
+                           actions: [
+                             FlatButton(
+                               onPressed: () {
+
+
+                                 commandes.add(
+                                     {
+                                       'Article_ref':datauser.docs[index]["Reference"].toString(),
+                                       'Article_name':datauser.docs[index]["Nom"].toString(),
+                                       'Vendeur_id': datauser.docs[index]["Vendeur_id"].toString(),
+                                       'Client_id': FirebaseAuth.instance.currentUser!.uid.toString(),
+                                       'quantite' : int.parse(_quantite.text.trim()),
+                                     }
+                                    
+                                 );
+                                  int qt= int.parse(datauser.docs[index]["quantite"].toString());
+                                 final art =FirebaseFirestore.instance.collection('articles').doc(datauser.docs[index].id);
+                                 art.update(
+                                     {
+                                       'quantite': qt- int.parse(_quantite.text.trim()),
+
+                                     }
+                                 );
+
+
+
+                                 Navigator.pop(context);
+                               },
+                               child: Text('Submit'),
+                             ),
+                             FlatButton(
+                               onPressed: () {
+                                 Navigator.pop(context);
+                               },
+                               child: Text('Cancel'),
+                             )
+                           ],
+                         );
+                       }
+                   );
                     
 
                   }, child: Text("acheter produit"))
