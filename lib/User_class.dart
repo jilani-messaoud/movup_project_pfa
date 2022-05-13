@@ -1,4 +1,4 @@
-class user_obj{
+class user_obj {
   String userid;
   String username;
   String role;

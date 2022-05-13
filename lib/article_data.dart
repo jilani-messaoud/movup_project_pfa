@@ -1,22 +1,15 @@
 import 'dart:convert';
 
-class article{
-   String Nom;
+class article {
+  String Nom;
   String Reference;
-   String Vendeur_id;
+  String Vendeur_id;
   String categorie;
   String image;
-   int quantite;
+  int quantite;
 
-   article(
- this.Nom,
-    this.Reference,
-    this.Vendeur_id,
-    this.categorie,
-    this.image,
-   this.quantite
- );
-
+  article(this.Nom, this.Reference, this.Vendeur_id, this.categorie, this.image,
+      this.quantite);
 }
 /*
 factory article.formJson(Map<String , dynamic>json){

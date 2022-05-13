@@ -16,38 +16,43 @@ class vendeur_screen extends StatelessWidget {
         title: Text(FirebaseAuth.instance.currentUser!.displayName.toString()),
       ),
       body: Container(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
-          decoration: BoxDecoration(
-              gradient: LinearGradient(colors: [
-                hexStringToColor("CB2B93"),
-                hexStringToColor("9546C4"),
-                hexStringToColor("5E61F4")
-              ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
-          child: SingleChildScrollView(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        decoration: BoxDecoration(
+            gradient: LinearGradient(colors: [
+          hexStringToColor("CB2B93"),
+          hexStringToColor("9546C4"),
+          hexStringToColor("5E61F4")
+        ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
+        child: SingleChildScrollView(
           child: Padding(
-          padding: EdgeInsets.fromLTRB(20, 120, 20, 0),
-             child: Column(
-                children: <Widget>[
+            padding: EdgeInsets.fromLTRB(20, 120, 20, 0),
+            child: Column(
+              children: <Widget>[
                 const SizedBox(
-                   height: 20,
-               ),
-             Text("add produit")
-             ,
-             ElevatedButton(onPressed: (){
-                    Navigator.push(context,
-                        MaterialPageRoute(builder:(context) => ajout_article_vendeur()));
-                  },
-                      child: Text('ajoute article')),
-                  ElevatedButton(onPressed: (){
-                    Navigator.push(context,
-                        MaterialPageRoute(builder:(context) => vendeur_screen_produit()));
-                  },
-                      child: Text('affiche mes articles'))
-    ],
-    ),
-      ),
-    ),
+                  height: 20,
+                ),
+                Text("add produit"),
+                ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ajout_article_vendeur()));
+                    },
+                    child: Text('ajoute article')),
+                ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => vendeur_screen_produit()));
+                    },
+                    child: Text('affiche mes articles'))
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

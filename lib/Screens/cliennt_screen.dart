@@ -1,7 +1,5 @@
 // ignore_for_file: deprecated_member_use
 
-
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -11,16 +9,15 @@ import 'package:image_picker/image_picker.dart';
 import 'package:movup/Services/storage_services.dart';
 import 'package:movup/Utils/color_utils.dart';
 import 'package:movup/article_data.dart';
+
 class client_screen extends StatelessWidget {
   final Stream<QuerySnapshot> articles =
-  FirebaseFirestore.instance.collection('articles').snapshots();
-  CollectionReference commandes = FirebaseFirestore.instance.collection("commande");
+      FirebaseFirestore.instance.collection('articles').snapshots();
+  CollectionReference commandes =
+      FirebaseFirestore.instance.collection("commande");
   final Storage storage = Storage();
 
-
-
-
- /*
+  /*
  article a = new article("Nom", "Reference", "Vendeur_id","categorie", "image", "quantite");
  Future<void> getData() async {
    // Get docs from collection reference
@@ -41,7 +38,6 @@ class client_screen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         title: Text(FirebaseAuth.instance.currentUser!.displayName.toString()),
@@ -51,130 +47,127 @@ class client_screen extends StatelessWidget {
         height: MediaQuery.of(context).size.height,
         decoration: BoxDecoration(
             gradient: LinearGradient(colors: [
-              hexStringToColor("CB2B93"),
-              hexStringToColor("9546C4"),
-              hexStringToColor("5E61F4")
-            ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
-          child: StreamBuilder<QuerySnapshot>(stream: articles,builder:(BuildContext context,  AsyncSnapshot<QuerySnapshot> snapshot){
-            if(snapshot.hasError){
+          hexStringToColor("CB2B93"),
+          hexStringToColor("9546C4"),
+          hexStringToColor("5E61F4")
+        ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
+        child: StreamBuilder<QuerySnapshot>(
+          stream: articles,
+          builder:
+              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (snapshot.hasError) {
               return Text("something wrong");
             }
-            if(snapshot.connectionState == ConnectionState.waiting){
+            if (snapshot.connectionState == ConnectionState.waiting) {
               return Text("Loading wait few instance");
-
             }
-            final datauser=snapshot.requireData;
-             return
-             ListView.builder(
-                itemCount: snapshot.requireData.size,
-                 itemBuilder: (BuildContext context, int index)
-            {
-              return Padding(
-                padding: EdgeInsets.fromLTRB(
-                    20, MediaQuery
-                    .of(context)
-                    .size
-                    .height * 0.2, 20, 0),
-                child: Column(
-                  children: <Widget>[
+            final datauser = snapshot.requireData;
+            return ListView.builder(
+              itemCount: snapshot.requireData.size,
+              itemBuilder: (BuildContext context, int index) {
+                return Padding(
+                  padding: EdgeInsets.fromLTRB(
+                      20, MediaQuery.of(context).size.height * 0.2, 20, 0),
+                  child: Column(
+                    children: <Widget>[
+                      Text(datauser.docs[index]["Nom"].toString()),
+                      Text(datauser.docs[index]["Reference"].toString()),
+                      Text(datauser.docs[index]["Vendeur_id"].toString()),
+                      Text(datauser.docs[index]["categorie"].toString()),
+                      Text(datauser.docs[index]["quantite"].toString()),
+                      FutureBuilder(
+                          future: storage
+                              .downloadURL(datauser.docs[index]["image"]),
+                          builder: (BuildContext context,
+                              AsyncSnapshot<String> snapshot) {
+                            if (snapshot.connectionState ==
+                                    ConnectionState.done &&
+                                snapshot.hasData) {
+                              return Container(
+                                  width: 300,
+                                  height: 250,
+                                  child: Image.network(snapshot.data!,
+                                      fit: BoxFit.cover));
+                            }
+                            if (snapshot.connectionState ==
+                                    ConnectionState.waiting ||
+                                !snapshot.hasData) {
+                              return CircularProgressIndicator();
+                            }
+                            return Container();
+                          }),
+                      ElevatedButton(
+                          onPressed: () {
+                            TextEditingController _quantite =
+                                TextEditingController();
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    title: Text("fenetre d'achat"),
+                                    content: Container(
+                                      height: 150,
+                                      child: Column(
+                                        children: [
+                                          TextField(
+                                            controller: _quantite,
+                                            decoration: InputDecoration(
+                                                hintText: 'quantite'),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    actions: [
+                                      FlatButton(
+                                        onPressed: () {
+                                          commandes.add({
+                                            'Article_ref': datauser.docs[index]
+                                                    ["Reference"]
+                                                .toString(),
+                                            'Article_name': datauser.docs[index]
+                                                    ["Nom"]
+                                                .toString(),
+                                            'Vendeur_id': datauser.docs[index]
+                                                    ["Vendeur_id"]
+                                                .toString(),
+                                            'Client_id': FirebaseAuth
+                                                .instance.currentUser!.uid
+                                                .toString(),
+                                            'quantite': int.parse(
+                                                _quantite.text.trim()),
+                                          });
+                                          int qt = int.parse(datauser
+                                              .docs[index]["quantite"]
+                                              .toString());
+                                          final art = FirebaseFirestore.instance
+                                              .collection('articles')
+                                              .doc(datauser.docs[index].id);
+                                          art.update({
+                                            'quantite': qt -
+                                                int.parse(
+                                                    _quantite.text.trim()),
+                                          });
 
-                    Text(datauser.docs[index]["Nom"].toString()),
-                    Text(datauser.docs[index]["Reference"].toString()),
-                    Text(datauser.docs[index]["Vendeur_id"].toString()),
-                    Text(datauser.docs[index]["categorie"].toString()),
-                    Text(datauser.docs[index]["quantite"].toString()),
-
-                    FutureBuilder(
-                        future: storage.downloadURL(datauser.docs[index]["image"]),
-                        builder: (BuildContext context,
-                            AsyncSnapshot<String> snapshot){
-
-                          if (snapshot.connectionState == ConnectionState.done &&
-                              snapshot.hasData){
-                            return Container(
-                                width: 300,
-                                height: 250,
-                                child: Image.network(snapshot.data!, fit: BoxFit.cover)
-                            );
-                          }
-                          if (snapshot.connectionState == ConnectionState.waiting ||
-                              !snapshot.hasData){
-                            return CircularProgressIndicator();
-                          }
-                          return Container();
-                        }
-                    ),
-                  ElevatedButton(onPressed:(){
-                    TextEditingController _quantite = TextEditingController();
-                   showDialog(
-                       context: context,
-                       builder: (context){
-                         return AlertDialog(
-                           title: Text("fenetre d'achat"),
-                           content: Container(
-                             height: 150,
-                             child: Column(
-                               children: [
-
-                                 TextField(
-                                   controller: _quantite,
-                                   decoration: InputDecoration(hintText: 'quantite'),
-                                 ),
-
-                               ],
-                             ),
-                           ),
-                           actions: [
-                             FlatButton(
-                               onPressed: () {
-
-
-                                 commandes.add(
-                                     {
-                                       'Article_ref':datauser.docs[index]["Reference"].toString(),
-                                       'Article_name':datauser.docs[index]["Nom"].toString(),
-                                       'Vendeur_id': datauser.docs[index]["Vendeur_id"].toString(),
-                                       'Client_id': FirebaseAuth.instance.currentUser!.uid.toString(),
-                                       'quantite' : int.parse(_quantite.text.trim()),
-                                     }
-                                    
-                                 );
-                                  int qt= int.parse(datauser.docs[index]["quantite"].toString());
-                                 final art =FirebaseFirestore.instance.collection('articles').doc(datauser.docs[index].id);
-                                 art.update(
-                                     {
-                                       'quantite': qt- int.parse(_quantite.text.trim()),
-
-                                     }
-                                 );
-
-
-
-                                 Navigator.pop(context);
-                               },
-                               child: Text('Submit'),
-                             ),
-                             FlatButton(
-                               onPressed: () {
-                                 Navigator.pop(context);
-                               },
-                               child: Text('Cancel'),
-                             )
-                           ],
-                         );
-                       }
-                   );
-                    
-
-                  }, child: Text("acheter produit"))
-
-                  ],
-                ),
-              );
-
-            },
-
-             );
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text('Submit'),
+                                      ),
+                                      FlatButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text('Cancel'),
+                                      )
+                                    ],
+                                  );
+                                });
+                          },
+                          child: Text("acheter produit"))
+                    ],
+                  ),
+                );
+              },
+            );
             /*return ListView.builder(
                   itemCount: datauser.size,
                   itemBuilder: (context, index){
@@ -182,13 +175,8 @@ class client_screen extends StatelessWidget {
                   },
                 );*/
           },
-          ),
-
+        ),
       ),
-
     );
-
   }
-
-
 }
