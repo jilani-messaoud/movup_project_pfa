@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:movup/Screens/Ajout_article_vendeur.dart';
 import 'package:movup/Screens/Vendeur_produit_screen.dart';
+import 'package:movup/Screens/signin_screen.dart';
 import 'package:movup/Utils/color_utils.dart';
 
 class vendeur_screen extends StatelessWidget {
@@ -13,9 +14,23 @@ class vendeur_screen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+       automaticallyImplyLeading: false,
         title: Text(FirebaseAuth.instance.currentUser!.displayName.toString()),
+        actions: [
+          new IconButton(onPressed:(){
+            FirebaseAuth.instance.signOut().then((value) {
+              Navigator.push(context, MaterialPageRoute(builder: (context)=> SignInScreen()) );
+            });
+
+          }
+              , icon: Icon(Icons.vpn_key)
+
+
+          ),
+        ],
       ),
       body: Container(
+
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
         decoration: BoxDecoration(

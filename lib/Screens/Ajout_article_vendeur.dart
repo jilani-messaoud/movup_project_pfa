@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:movup/Screens/Vendeur_produit_screen.dart';
 import 'package:movup/Screens/home_screen.dart';
+import 'package:movup/Screens/signin_screen.dart';
 import 'package:movup/Services/storage_services.dart';
 import 'package:movup/Utils/color_utils.dart';
 import 'package:movup/reusable_widgets/reusable_widget.dart';
@@ -24,6 +25,7 @@ class _ajout_article_vendeurstate extends State<ajout_article_vendeur> {
       FirebaseFirestore.instance.collection("articles");
   final Storage storage = Storage();
   TextEditingController _ref = TextEditingController();
+  TextEditingController _ville = TextEditingController();
   TextEditingController _qte = TextEditingController();
   TextEditingController _nom = TextEditingController();
   String? filename;
@@ -34,11 +36,26 @@ class _ajout_article_vendeurstate extends State<ajout_article_vendeur> {
     'nourriture',
     'decoration'
   ];
-  String? categories_val;
+  String? categories_val ;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text(FirebaseAuth.instance.currentUser!.displayName.toString()),
+        actions: [
+          new IconButton(onPressed:(){
+            FirebaseAuth.instance.signOut().then((value) {
+              Navigator.push(context, MaterialPageRoute(builder: (context)=> SignInScreen()) );
+            });
+
+          }
+              , icon: Icon(Icons.vpn_key)
+
+
+          ),
+        ],
+      ),
       body: Container(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
@@ -92,6 +109,11 @@ class _ajout_article_vendeurstate extends State<ajout_article_vendeur> {
                 const SizedBox(
                   height: 20,
                 ),
+                reusableTextField(
+                    "ville", Icons.format_color_text, false, _ville),
+                const SizedBox(
+                  height: 20,
+                ),
                 ElevatedButton(
                   onPressed: () async {
                     final result = await FilePicker.platform.pickFiles(
@@ -140,6 +162,7 @@ class _ajout_article_vendeurstate extends State<ajout_article_vendeur> {
                             "quantite": int.parse(_qte.text.trim()),
                             "categorie": categories_val,
                             "image": filename,
+                            "ville":_ville.text.trim()
                           })
                           .then((value) => Navigator.push(
                               context,

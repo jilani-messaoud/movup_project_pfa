@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:movup/Screens/home_screen.dart';
 import 'package:movup/Screens/reset_password.dart';
 import 'package:movup/Screens/signup_screen.dart';
+import 'package:movup/Utils/color_utils.dart';
 import 'package:movup/reusable_widgets/reusable_widget.dart';
 
 class SignInScreen extends StatefulWidget {
@@ -21,18 +22,25 @@ class _SignInScreenState extends State<SignInScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
         decoration: BoxDecoration(
             gradient: LinearGradient(
-                colors: [Colors.lightBlueAccent, Colors.redAccent],
+                colors: [
+                  hexStringToColor("F39C12"),
+                  hexStringToColor("FFD07E"),
+                  hexStringToColor("F1C40F")
+                ],
                 begin: Alignment.topCenter,
-                end: Alignment.bottomCenter)),
+                end: Alignment.bottomCenter)
+        ),
         child: SingleChildScrollView(
           child: Padding(
             padding: EdgeInsets.fromLTRB(
                 20, MediaQuery.of(context).size.height * 0.2, 20, 0),
             child: Column(
               children: <Widget>[
-                reusableTextField("Enter UserName", Icons.person_outline, false,
+                reusableTextField("Entrer UserName", Icons.person_outline, false,
                     _emailTextController),
                 const SizedBox(
                   height: 20,

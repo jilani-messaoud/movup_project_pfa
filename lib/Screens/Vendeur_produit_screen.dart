@@ -1,11 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:movup/Services/storage_services.dart' as storage;
-
+import 'package:movup/Screens/signin_screen.dart';
 import 'package:movup/Services/storage_services.dart';
 import 'package:movup/Utils/color_utils.dart';
-import 'package:movup/article_data.dart';
 
 class vendeur_screen_produit extends StatelessWidget {
   final Stream<QuerySnapshot> articles =
@@ -19,15 +17,27 @@ class vendeur_screen_produit extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(FirebaseAuth.instance.currentUser!.displayName.toString()),
+        actions: [
+          new IconButton(onPressed:(){
+            FirebaseAuth.instance.signOut().then((value) {
+
+              Navigator.push(context, MaterialPageRoute(builder: (context)=> SignInScreen()) );
+            });
+
+          }
+              , icon: Icon(Icons.vpn_key)
+
+          ),
+        ],
       ),
       body: Container(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
         decoration: BoxDecoration(
             gradient: LinearGradient(colors: [
-          hexStringToColor("CB2B93"),
-          hexStringToColor("9546C4"),
-          hexStringToColor("5E61F4")
+              hexStringToColor("F39C12"),
+              hexStringToColor("FFD07E"),
+              hexStringToColor("F1C40F")
         ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
         child: StreamBuilder<QuerySnapshot>(
           stream: ref.snapshots(),
@@ -52,9 +62,13 @@ class vendeur_screen_produit extends StatelessWidget {
                         20, MediaQuery.of(context).size.height * 0.2, 20, 0),
                     child: Column(
                       children: <Widget>[
+                        Text("Nom d'article", style: TextStyle(color: Colors.black54,fontSize: 18)),
                         Text(datauser.docs[index]["Nom"].toString()),
+                        Text("Reference d'article", style: TextStyle(color: Colors.black54,fontSize: 18)),
                         Text(datauser.docs[index]["Reference"].toString()),
+                        Text("categorie d'article", style: TextStyle(color: Colors.black54,fontSize: 18)),
                         Text(datauser.docs[index]["categorie"].toString()),
+                        Text("quantite d'article", style: TextStyle(color: Colors.black54,fontSize: 18)),
                         Text(datauser.docs[index]["quantite"].toString()),
                         FutureBuilder(
                             future: storage
